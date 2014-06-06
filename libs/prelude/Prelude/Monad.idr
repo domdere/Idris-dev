@@ -13,6 +13,17 @@ infixl 5 >>=
 class Applicative m => Monad (m : Type -> Type) where
     (>>=)  : m a -> (a -> m b) -> m b
 
+infixr 1 >=>
+
+||| Kleisli Composition
+(>=>) : Monad m => (a -> m b) -> (b -> m c) -> a -> m c
+(>=>) f g x = f x >>= g
+
+infixr 1 <=<
+
+(<=<) : Monad m => (b -> m c) -> (a -> m b) -> a -> m c
+(<=<) = flip (>=>)
+
 ||| Also called `join` or mu
 flatten : Monad m => m (m a) -> m a
 flatten a = a >>= id
@@ -21,3 +32,8 @@ flatten a = a >>= id
 ||| define `return` and `pure` differently!
 return : Monad m => a -> m a
 return = pure
+
+class Monad m => VerifiedMonad (m : Type -> Type) where
+    total pureIdentityL : (k : a -> m b) -> (x : a) -> pure x >>= k = k x
+    total pureIdentityR : (ma : m a) -> ma >>= pure = ma
+    total bindAssociative : (k : a -> m b) -> (h : b -> m c) -> (ma : m a) -> ma >>= (k >=> h) = (ma >>= k) >>= h

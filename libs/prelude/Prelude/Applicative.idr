@@ -9,9 +9,17 @@ import Prelude.Functor
 
 infixl 2 <$>
 
+||| A Functor that maps not only arrows to arrows, but maps the function type (as an object of the domain category) to the function type in the codomain category
 class Functor f => Applicative (f : Type -> Type) where
     pure  : a -> f a
     (<$>) : f (a -> b) -> f a -> f b
+
+||| An Applicative that is verified to satisfy the Applicative laws.
+class Applicative f => VerifiedApplicative (f : Type -> Type) where
+    total applicativePureId       : (v : f a) -> (pure id) <$> v = v
+    total applicativeComposition  : (u : f (b -> c)) -> (v : f (a -> b)) -> (w : f a) -> pure (.) <$> u <$> v <$> w = u <$> (v <$> w)
+    total applicativeHomomorphism : (k : a -> b) -> (x : a) -> pure k <$> pure x = pure (k x)
+    total applicativeInterchange  : (u : f (a -> b)) -> (y : a) -> (u <$> (pure y)) = (pure (flip apply y) <$> u)
 
 infixl 2 <$
 (<$) : Applicative f => f a -> f b -> f a

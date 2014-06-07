@@ -33,7 +33,14 @@ flatten a = a >>= id
 return : Monad m => a -> m a
 return = pure
 
+liftM2 : Monad m => (a -> b -> c) -> m a -> m b -> m c
+liftM2 f mx my = mx >>= (\x => my >>= (\y => pure (f x y)))
+
 class Monad m => VerifiedMonad (m : Type -> Type) where
-    total pureIdentityL : (k : a -> m b) -> (x : a) -> pure x >>= k = k x
-    total pureIdentityR : (ma : m a) -> ma >>= pure = ma
-    total bindAssociative : (k : a -> m b) -> (h : b -> m c) -> (ma : m a) -> ma >>= (k >=> h) = (ma >>= k) >>= h
+    total monadPureIdentityL : (k : a -> m b) -> (x : a) -> pure x >>= k = k x
+    total monadPureIdentityR : (ma : m a) -> ma >>= pure = ma
+    total monadBindAssociative : (k : a -> m b) -> (h : b -> m c) -> (ma : m a) -> ma >>= (k >=> h) = (ma >>= k) >>= h
+
+    ||| Lifting a curried function using the Monad bind should be consistent with the Applicative behaviour
+    total monadBindApplySame : (f : a -> b -> c) -> (mx : m a) -> (my : m b) -> liftM2 f mx my = liftA2 f mx my
+

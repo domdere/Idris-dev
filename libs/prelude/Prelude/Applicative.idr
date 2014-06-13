@@ -9,7 +9,6 @@ import Prelude.Functor
 
 infixl 2 <$>
 
-||| A Functor that maps not only arrows to arrows, but maps the function type (as an object of the domain category) to the function type in the codomain category
 class Functor f => Applicative (f : Type -> Type) where
     pure  : a -> f a
     (<$>) : f (a -> b) -> f a -> f b

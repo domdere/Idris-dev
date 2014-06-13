@@ -119,6 +119,7 @@ instance NFData FnOpt where
 instance NFData DataOpt where
         rnf Codata = ()
         rnf DefaultEliminator = ()
+        rnf DefaultCaseFun = ()
 
 instance (NFData t) => NFData (PDecl' t) where
         rnf (PFix x1 x2 x3) = rnf x1 `seq` rnf x2 `seq` rnf x3 `seq` ()
@@ -236,6 +237,7 @@ instance (NFData t) => NFData (PTactic' t) where
         rnf (Refine x1 x2) = rnf x1 `seq` rnf x2 `seq` ()
         rnf (Rewrite x1) = rnf x1 `seq` ()
         rnf (Induction x1) = rnf x1 `seq` ()
+        rnf (CaseTac x1) = rnf x1 `seq` ()
         rnf (Equiv x1) = rnf x1 `seq` ()
         rnf (MatchRefine x1) = rnf x1 `seq` ()
         rnf (LetTac x1 x2) = rnf x1 `seq` rnf x2 `seq` ()
@@ -291,12 +293,13 @@ instance NFData TypeInfo where
         rnf (TI x1 x2 x3 x4 x5) = rnf x1 `seq` rnf x2 `seq` rnf x3 `seq` rnf x4 `seq` rnf x5 `seq` ()
 
 instance (NFData t) => NFData (DSL' t) where
-        rnf (DSL x1 x2 x3 x4 x5 x6 x7 x8 x9)
+        rnf (DSL x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
           = rnf x1 `seq`
               rnf x2 `seq`
                 rnf x3 `seq`
                   rnf x4 `seq`
-                    rnf x5 `seq` rnf x6 `seq` rnf x7 `seq` rnf x8 `seq` rnf x9 `seq` ()
+                    rnf x5 `seq`
+                      rnf x6 `seq` rnf x7 `seq` rnf x8 `seq` rnf x9 `seq` rnf x10 `seq` ()
 
 instance NFData SynContext where
         rnf PatternSyntax = ()
